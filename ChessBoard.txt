@@ -1,0 +1,170 @@
+package com.company;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+public class ChessBOard extends JPanel {
+    private BufferedImage TABLE;
+    private BufferedImage black;
+    private BufferedImage white;
+    /**
+     * 当gameOver为1时，游戏结束
+     * 当gameOver为0时，游戏开始，游戏正在进行
+     */
+    //private static int gameOver = 1;
+    /**
+     * flag设置为1，每次均为下黑棋
+     * 即为黑棋先手
+     */
+    private static int flag = 1;
+    private static int TABLE_COlS = 15;
+    private static int TABLE_ROWS = 15;
+    private final int TABLE_WIDTH = 535;
+    private final int TABLE_HEIGHT = 535;
+    /**
+     * RATE 用于存储每个格子有多大，用于画棋子；
+     */
+    private final int RATE = TABLE_WIDTH / TABLE_COlS;
+    private int[][] Chess = new int[TABLE_COlS][TABLE_ROWS];
+    private String fontName = "人人对战";
+
+    /**
+     *  public String getFontName() {
+     *         return this.fontName;
+     *     }
+     * @return
+     */
+
+
+    public void init() throws IOException {
+        /**
+         * table 从硬盘中读取位图，放到程序中
+         * black 从硬盘中读取黑棋的图片，放到程序中
+         * white 从硬盘中读取白棋的图片，放到程序中
+         */
+        TABLE = ImageIO.read(new File("C:\\Users\\陈佳展\\Desktop\\0006019033396103_b.jpg"));
+        /**
+         *   black = ImageIO.read(new File("C:\\Users\\陈佳展\\Desktop\\0006019033396103_b.jpg"));
+         *   white = ImageIO.read(new File("C:\\Users\\陈佳展\\Desktop\\0006019033396103_b.jpg"));
+         */
+        /**
+         * 创建一个Jframe用于存取其他器件
+         */
+        JFrame frame = new JFrame("五子棋");
+        frame.setSize(new Dimension(685, 580));
+        /**
+         * 设置布局管理器为BoarderLayout，分为5个部分
+         */
+        frame.setLayout(new BorderLayout());
+
+        /**
+         * 创建一个棋盘
+         */
+
+        this.setPreferredSize(new Dimension(TABLE_WIDTH, 555));
+        /**
+         * 创建一个JPanel这个轻量级容器，用于存储一些器件
+         * 最终放于JFrame中
+         */
+        JPanel panel = new JPanel();
+        panel.setPreferredSize(new Dimension(150, 0));
+        JButton regret = new JButton("悔棋");
+        regret.setPreferredSize(new Dimension(120, 100));
+        JButton giveup = new JButton("认输");
+        giveup.setPreferredSize(new Dimension(120, 100));
+        JButton start = new JButton("开始游戏");
+        start.setPreferredSize(new Dimension(120, 100));
+        JButton exit = new JButton("退出");
+        exit.setPreferredSize(new Dimension(120, 100));
+        /**
+         * 将上面所创建的按钮全部放于JPanel中
+         * 然后将JPanel全部放于Jframe的左边
+         */
+        panel.add(start);
+        panel.add(regret);
+        panel.add(giveup);
+        panel.add(exit);
+        String[] type = {"人人对战", "人机对战"};
+        JComboBox<String> cItem = new JComboBox<>(type);
+        cItem.setPreferredSize(new Dimension(120, 100));
+        panel.add(cItem);
+        panel.setBackground(Color.orange);
+        frame.add(panel, BorderLayout.EAST);
+        frame.add(this);
+        frame.setResizable(false);
+        frame.setVisible(true);
+        Listener L = new Listener(this,Chess);
+        /**
+         * 为这些按钮增加监视器
+         */
+
+        /**
+         * 这个为悔棋的监视器
+         */
+
+
+        regret.addActionListener(L);
+        cItem.addActionListener(L);
+        /**
+         * 这个是开始游戏的监视器
+         */
+        start.addActionListener(L);
+        /**
+         * 这个是认输的监视器
+         */
+        giveup.addActionListener(L);
+        /**
+         * 这个是退出的监视器
+         */
+        exit.addActionListener(L);
+
+
+        /**
+         * 增加一个监视器
+         */
+        this.addMouseListener(L);
+    }
+
+    /**
+     * 使用这个方法来调用这个gameOver这个类，感觉是不是没什么用呢？
+     * 其他类其实也用不到，在ChessBoard类中也无法调用这个变量，可是事实上也没有什么用处吧
+     *
+     * @return
+     */
+    public void paint(Graphics g) {
+        g.drawImage(TABLE, 0, 0, TABLE_WIDTH, TABLE_HEIGHT, null);
+
+        for (int i = 0; i < Chess.length; i++) {
+            for (int j = 0; j < Chess[i].length; j++)
+                if (Chess[i][j] == 1) {
+                    /**
+                     * 需要计算此时应该从哪里开始画，画多大
+                     *  TABLE_COlS = 15;
+                     *  private static int TABLE_ROWS = 15;
+                     *  private final int TABLE_WIDTH = 535;
+                     *  private final int TABLE_HEIGHT = 535;
+                     */
+                    Color c = g.getColor();
+                    g.setColor(Color.black);
+                    /**
+                     * 这个画椭圆的位置应该要经过计算
+                     */
+                    g.fillOval(0, 0, TABLE_WIDTH, TABLE_HEIGHT);
+                    g.setColor(c);
+                } else if (Chess[i][j] == 2) {
+                    Color c = g.getColor();
+                    g.setColor(Color.white);
+                    /**
+                     * 这个画椭圆的位置应该要经过计算
+                     */
+                    g.fillOval(0, 0, TABLE_WIDTH, TABLE_HEIGHT);
+                    g.setColor(c);
+                }
+        }
+
+    }
+}
